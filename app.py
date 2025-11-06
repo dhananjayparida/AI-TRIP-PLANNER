@@ -7,13 +7,14 @@ app = Flask(__name__)
 def home(): 
     return "hello"
 
-@app.route('/Smart_Trip_Planner/<string:source>/<string:destination>/<int:days>/<int:budget>', methods=['GET'])
-def smart_trip_planner(source , destination, days, budget):
-    detail=at.generate_trip_plan(source, destination, days, budget).replace("\n", "<br>")
-    return jsonify(detail)
+# @app.route('/Smart_Trip_Planner/<string:source>/<string:destination>/<int:days>/<int:budget>', methods=['GET'])
+# def smart_trip_planner(source , destination, days, budget):
+#     detail=at.generate_trip_plan(source, destination, days, budget).replace("\n", "<br>")
+#     return jsonify(detail)
 
 if(__name__=="__main__"):
     app.run(host='0.0.0.0',debug=True)
+
 
 
 
