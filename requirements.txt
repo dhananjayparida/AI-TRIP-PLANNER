@@ -83,9 +83,9 @@ pygame==2.6.1
 Pygments==2.19.2
 pyparsing==3.2.5
 PyPika==0.48.9
-pypiwin32==223
 pyproject_hooks==1.2.0
 pyreadline3==3.5.4
+python==3.11.9
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
 pyttsx3==2.99
@@ -124,6 +124,7 @@ uritemplate==4.2.0
 urllib3==2.3.0
 uvicorn==0.38.0
 watchfiles==1.1.1
+gunicorn==21.2.0
 websocket-client==1.9.0
 websockets==15.0.1
 Werkzeug==3.1.3
