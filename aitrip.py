@@ -86,8 +86,6 @@ def build_prompt(source, destination, days, budget):
 
 
 def generate_with_gemini(prompt):
-    """Try generating the trip plan using Gemini 2.5."""
-    print("🤖 Using Gemini 2.5 for generation...")
     try:
         model = genai.GenerativeModel("gemini-2.5-flash")
         response = model.generate_content(prompt)
@@ -118,14 +116,6 @@ def generate_trip_plan(source, destination, days, budget):
         text = generate_with_transformers(prompt)
 
     # Save output
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"tripplan_{destination.replace(' ', '_')}_{timestamp}.md"
-
-    with open(filename, "w", encoding="utf-8") as f:
-        f.write(text)
-
-    print("🗓 Trip Plan Generated Successfully!\n")
-    print(f"\n💾 Saved to: {os.path.abspath(filename)}\n")
     return text
     
 
@@ -133,18 +123,4 @@ def generate_trip_plan(source, destination, days, budget):
 # ----------------------- MAIN ENTRY POINT -----------------------
 
 if __name__ == "__main__":
-    print("🧭 Welcome to AI Trip Planner v4 🌍 (Gemini + Transformers)\n")
-
-    source = input("Enter your source city: ").strip() or "Deoghar"
-    destination = input("Enter your destination city: ").strip() or "Puri"
-    days = input("Number of travel days: ").strip() or "3"
-    budget = input("Total budget (₹): ").strip() or "5000"
-
-    try:
-        int(days)
-        int(budget)
-    except ValueError:
-        print("❌ Please enter valid numeric values for days and budget.")
-        exit(1)
-
     generate_trip_plan(source, destination, days, budget)
