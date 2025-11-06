@@ -15,5 +15,6 @@ def smart_trip_planner(source , destination, days, budget):
     detail=at.generate_trip_plan(source, destination, days, budget).replace("\n", "<br>")
     return jsonify(detail)
 
+if(__name__=="__main__")
+    app.run(host='0.0.0.0',debug=True)
 
-app.run(debug=True)
