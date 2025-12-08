@@ -1,126 +1,67 @@
-# ==========================================================
-# 🌍 AI Trip Planner v4 (Hybrid: Gemini 2.5 + Transformers)
-# Author: Abhishek Thakur
-# Description: Combines Gemini 2.5 API with local Transformers backup
-# ==========================================================
+from google import genai
 
-import os
-import datetime
-from dotenv import load_dotenv
+client = genai.Client(api_key="AIzaSyCUCdsGEnc2isVLd2v1NfLafBeL_nUIEo4")
 
-# Google Gemini imports
-import google.generativeai as genai
 
-# Transformers (Hugging Face) imports
-from transformers import pipeline
+chat = client.chats.create(model="gemini-2.0-flash")
 
-# ----------------------- CONFIGURATION -----------------------
 
-load_dotenv()
+city = input("City: ")
+destination = input("Destination: ")
+days = input("Number of days: ")
+budget = input("Budget: ") 
+message = f"""You are an enthusiastic AI-powered travel planner who creates exciting, realistic, and budget-friendly itineraries.
 
-# Get Gemini API key from environment (do NOT hardcode keys in source)
-# Ensure you have a .env file with GEMINI_API_KEY=your_key or set the env var
-GEMINI_API_KEY = "AIzaSyBZ_EZWe_Wac-kxbBq-1Mq-RzD5wg94-2M"
-
-# Configure Gemini if available
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
-else:
-    print("⚠️ No Gemini API key found. Falling back to Transformers mode.\n")
-
-# ----------------------- PROMPT TEMPLATE -----------------------
-
-PROMPT_TEMPLATE = """You are an enthusiastic AI-powered travel planner who creates exciting, realistic, and budget-friendly itineraries.
-
-Plan a fun and influencer-style {days}-day trip from {source} to {destination} within a budget of ₹{budget}.
+Plan a fun and influencer-style {days}-day trip from {city} to {destination} within a budget of ₹{budget}.
 
 Use markdown formatting, emojis, and an engaging tone. Keep it practical yet inspiring.
 
 ---
 
-### ✈️ How to Reach
-List the *best travel options* with cost, comfort, and travel time.
+###  How to Reach
+List the best travel options with cost, comfort, and travel time.
 
 ---
 
-### 🏨 Where to Stay
+###  Where to Stay
 Recommend 3 accommodation options:
-- 💸 Budget
-- 💼 Mid-range
-- 🌟 Premium
+-  Budget
+-  Mid-range
+-  Premium
 Include nearby landmarks and approx. cost/night.
 
 ---
 
-### 🍛 Food & Drinks
+###  Food & Drinks
 Include local dishes, famous eateries, and an estimated daily food budget.
 
 ---
 
-### 🎡 Things to Do
+###  Things to Do
 Suggest must-visit attractions, hidden gems, and special local experiences.
 Add entry fees or tips if needed.
 
 ---
 
-### 🗓 Day-wise Itinerary
+###  Day-wise Itinerary
 Plan each day briefly, including sightseeing, meals, and evening activities.
 
 ---
 
-### 💰 Estimated Total Budget
+###  Estimated Total Budget
 Summarize the approximate cost breakdown (travel, stay, food, activities, extras).
 
 ---
 
-### 💡 Travel Tips
+###  Travel Tips
 Add 2–3 smart travel hacks or cultural tips for {destination}! 
-Make it feel like a travel influencer’s post ✨
-"""
+Make it feel like a travel influencer’s post """
+#message = f"Create a travel itinerary for a trip to {city} to {destination} for {days} days with a budget of {budget} Ruppees. Provide day-wise activities and places to visit. in brief points format, use * for points."
+response = chat.send_message(message)
+with open("data.txt", "w") as file:
+   file.write(response.text)
 
-# ----------------------- CORE FUNCTIONS -----------------------
-
-def build_prompt(source, destination, days, budget):
-    """Inject user inputs into the main prompt template."""
-    return PROMPT_TEMPLATE.format(source=source, destination=destination, days=days, budget=budget)
-
-
-def generate_with_gemini(prompt):
-    try:
-        model = genai.GenerativeModel("gemini-2.5-flash")
-        response = model.generate_content(prompt)
-        return response.text.strip()
-    except Exception as e:
-        print(f"⚠️ Gemini failed: {e}")
-        return None
-
-
-def generate_with_transformers(prompt):
-    """Fallback: Generate the trip plan using Hugging Face Transformers."""
-    print("💡 Switching to local Transformers model (Flan-T5)...")
-    generator = pipeline("text2text-generation", model="google/flan-t5-large", device="cpu")
-    result = generator(prompt, max_length=800, do_sample=True, temperature=0.8, top_p=0.9)
-    return result[0]["generated_text"].strip()
-
-
-def generate_trip_plan(source, destination, days, budget):
-    """Generate the travel plan using Gemini (fallback to Transformers)."""
-    print("\n🚀 Generating your influencer-style travel plan...\n")
-    prompt = build_prompt(source, destination, days, budget)
-
-    # Try Gemini first
-    text = generate_with_gemini(prompt)
-
-    # Fallback if Gemini fails
-    if not text:
-        text = generate_with_transformers(prompt)
-
-    # Save output
-    return text
-    
-
-
-# ----------------------- MAIN ENTRY POINT -----------------------
-
-if __name__ == "__main__":
-    generate_trip_plan(source, destination, days, budget)
+with open("data.txt", "r") as file:
+   content=file.read()
+newcontent=content.replace("*"," ")
+print("AI:", newcontent)
